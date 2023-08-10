@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>COVID-19 Total Deaths by Country</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 80%; margin: auto;">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        getChartData();
+        async function getChartData() {
+            const queryString = window.location.search;
+            console.log('Query String=' + queryString);
+            const apiurl = 'http://localhost:8082/collectChartData';
+
+            const response = await fetch(apiurl);
+            const chartData = await response.json();
+
+            const countries = chartData.map(data => data.country);
+            const totalDeaths = chartData.map(data => data.latestTotalDeaths);
+
+            // Chart.js configuration
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: countries,
+                    datasets: [{
+                        label: 'Total Deaths',
+                        data: totalDeaths,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderWidth: 1,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
